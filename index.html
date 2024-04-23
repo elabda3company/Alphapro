@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+  <head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,100..1000&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="./src/components/assets/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Alpha Pro</title>
+
+
+    <!-- <meta property="og:title" content="Alpha pro">
+    <meta property="og:description" content="Description of your website">
+    <meta property="og:image" content="https://www.example.com/image.jpg">
+    <meta property="og:url" content="https://www.example.com"> -->
+
+    <title>Alpha Pro</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <!-- Place your React script here, just before closing body tag -->
+    <script type="module" src="/src/main.jsx"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var canvas = document.createElement('canvas');
+      document.body.appendChild(canvas);
+      canvas.style.position = 'fixed';
+      canvas.style.top = '0';
+      canvas.style.left = '0';
+      canvas.style.width = '100%';
+      canvas.style.height = '100%';
+      canvas.style.zIndex = '0';
+      canvas.style.pointerEvents = 'none';
+    
+      var context = canvas.getContext('2d');
+      var maxx = window.innerWidth;
+      var maxy = window.innerHeight;
+      canvas.width = maxx;
+      canvas.height = maxy;
+    
+      var dotCount = 500;
+      var dots = [];
+      var meteors = [];
+    
+      for (var i = 0; i < dotCount; i++) {
+        dots.push(createDot());
+      }
+    
+      // Function to create stars
+      function createDot() {
+        return {
+          x: Math.random() * maxx,
+          y: Math.random() * maxy,
+          radius: Math.random() * 1 + 0.5,
+          speedY: -Math.random() * 0.5 - 0.2,
+          speedX: (Math.random() - 0.5) * 1,
+          draw: function() {
+            context.beginPath();
+            context.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+            context.fillStyle = `rgba(255, 255, 255, ${Math.random() * 0.5 + 0.5})`;
+            context.fill();
+          },
+          update: function() {
+            this.x += this.speedX;
+            this.y += this.speedY;
+            if (this.y < 0) {
+              this.y = maxy;
+              this.x = Math.random() * maxx;
+            }
+            if (this.x > maxx || this.x < 0) {
+              this.x = Math.random() * maxx;
+            }
+          }
+        };
+      }
+    
+      // Function to create meteors
+      function createMeteor() {
+        var angle = Math.random() * Math.PI * 2; // Random angle for 360 degree movement
+        var speed = Math.random() * 5 + 2; // Faster speed for meteors
+        return {
+          x: Math.random() * maxx,
+          y: Math.random() * maxy,
+          radius: Math.random() * 3 + 2, // Bigger, brighter dots
+          speedX: Math.cos(angle) * speed,
+          speedY: Math.sin(angle) * speed,
+          opacity: 1.0,
+          active: true,
+          draw: function() {
+            context.beginPath();
+            context.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+            context.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+            context.fill();
+          },
+          update: function() {
+            this.x += this.speedX;
+            this.y += this.speedY;
+            if (this.opacity <= 0) {
+              this.active = false;
+            }
+          }
+        };
+      }
+    
+      function render() {
+        context.clearRect(0, 0, maxx, maxy);
+        dots.forEach(dot => dot.update());
+        dots.forEach(dot => dot.draw());
+        meteors.forEach(meteor => {
+          meteor.update();
+          if (!meteor.active) {
+            meteors.splice(meteors.indexOf(meteor), 1);
+          }
+        });
+        meteors.forEach(meteor => meteor.draw());
+        if (Math.random() < 0.03) { // Chance to create a new meteor
+          meteors.push(createMeteor());
+        }
+        requestAnimationFrame(render);
+      }
+    
+      render();
+    
+      window.addEventListener('resize', function() {
+        maxx = window.innerWidth;
+        maxy = window.innerHeight;
+        canvas.width = maxx;
+        canvas.height = maxy;
+      });
+    });
+    
+    </script>
+  </body>
+
+        
+</html>
